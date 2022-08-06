@@ -1,0 +1,139 @@
+openapi: 3.0.0
+
+info:
+  description: Backend for the frontend recruitment tests
+  title: Frontend Test
+  version: 1.0.0
+
+servers:
+  - url: 'http://localhost:8181'
+    description: Development server
+
+paths:
+
+  /users:
+    get:
+      description: Returns the list of all available users
+      responses:
+        '200':
+          description: The request was successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserList"
+
+    post:
+      description: Creates a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PartialUser'
+      responses:
+        '201':
+          description: The request was successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        '400':
+          description: The request is ill-formed.
+
+  /users/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: Identifier of the user to retrieve
+    get:
+      description: Returns the user with the specified ID
+      responses:
+        '200':
+          description: The request was successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        '400':
+          description: The request is ill-formed.
+        '404':
+          description: The specified ID does not exist
+    put:
+      description: Updates the user with the specified ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PartialUser'
+      responses:
+        '200':
+          description: The request was successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        '400':
+          description: The request is ill-formed.
+        '404':
+          description: The specified ID does not exist
+    delete:
+      description: Deletes the requested user
+      responses:
+        '200':
+          description: The request was successful
+        '404':
+          description: The specified ID does not exist
+
+components:
+
+  schemas:
+
+    UserList:
+      type: array
+      items:
+        $ref: '#/components/schemas/User'
+
+    User:
+      type: object
+      required:
+        - id
+        - name
+        - picture
+      properties:
+        id:
+          type: string
+          example: 7d442322-01cb-4813-8853-4fae92785e1f
+        picture:
+          type: string
+          example: "https://randomuser.me/api/portraits/men/25.jpg"
+        name:
+          $ref: '#/components/schemas/Name'
+
+    PartialUser:
+      type: object
+      required:
+        - name
+        - picture
+      properties:
+        picture:
+          type: string
+          example: "https://randomuser.me/api/portraits/men/25.jpg"
+        name:
+          $ref: '#/components/schemas/Name'
+
+    Name:
+      type: object
+      required:
+        - first
+        - last
+      properties:
+        first:
+          type: string
+          example: philip
+        last:
+          type: string
+          example: young
